@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * CiviMember Roles Sync module code.
+ */
+
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_user_login().
+ */
+function civicrm_member_roles_user_login(AccountInterface $account) {
+  $config = \Drupal::config('civicrm_member_roles.settings');
+  if (!in_array('login', $config->get('sync_method'))) {
+    return;
+  }
+
+  /** @var \Drupal\civicrm_member_roles\CivicrmMemberRoles $civicrm_member_roles */
+  $civicrm_member_roles = \Drupal::service('civicrm_member_roles');
+  $civicrm_member_roles->syncUser($account);
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function civicrm_member_roles_user_logout(AccountInterface $account) {
+  $config = \Drupal::config('civicrm_member_roles.settings');
+  if (!in_array('login', $config->get('sync_method'))) {
+    return;
+  }
+
+  /** @var \Drupal\civicrm_member_roles\CivicrmMemberRoles $civicrm_member_roles */
+  $civicrm_member_roles = \Drupal::service('civicrm_member_roles');
+  $civicrm_member_roles->syncUser($account);
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function civicrm_member_roles_cron() {
+  $config = \Drupal::config('civicrm_member_roles.settings');
+  if (in_array('cron', $config->get('sync_method'))) {
+    /** @var \Drupal\civicrm_member_roles\CivicrmMemberRoles $civicrm_member_roles */
+    $civicrm_member_roles = \Drupal::service('civicrm_member_roles');
+    $civicrm_member_roles->sync();
+  }
+}
+
+// < ===== >
+
+function test_code() {
+  $account = \Drupal::currentUser()->getAccount();
+  \Drupal::service('civicrm_member_roles')->syncUser($account);
+}
