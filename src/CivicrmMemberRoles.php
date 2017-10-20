@@ -165,7 +165,7 @@ class CivicrmMemberRoles {
    * @return int|null
    *   The contact ID, or NULL if not found.
    */
-  protected function getUserContactId(AccountInterface $account) {
+  public function getUserContactId(AccountInterface $account) {
     try {
       $params = ['uf_id' => $account->id()];
       $result = civicrm_api3('UFMatch', 'getsingle', $params);
@@ -175,6 +175,27 @@ class CivicrmMemberRoles {
     }
 
     return $result['contact_id'];
+  }
+
+  /**
+   * Obtain the user account for a contact.
+   *
+   * @param int $cid
+   *   The contact ID.
+   *
+   * @return \Drupal\Core\Session\AccountInterface|null
+   *   The contact ID, or NULL if not found.
+   */
+  public function getContactAccount($cid) {
+    try {
+      $params = ['contact_id' => $cid];
+      $result = civicrm_api3('UFMatch', 'getsingle', $params);
+    }
+    catch (\Exception $e) {
+      return NULL;
+    }
+
+    return \Drupal::currentUser();
   }
 
   /**
@@ -210,7 +231,7 @@ class CivicrmMemberRoles {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account.
    */
-  protected function syncContact($cid, AccountInterface $account) {
+  public function syncContact($cid, AccountInterface $account) {
     $rules = $this->getRules();
     $memberships = $this->getContactMemberships($cid);
 
