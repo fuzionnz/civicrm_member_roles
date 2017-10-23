@@ -6,6 +6,7 @@ use Drupal\civicrm\Civicrm;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Class CivicrmMemberRoles.
@@ -321,6 +322,10 @@ class CivicrmMemberRoles {
    *   The user entity.
    */
   protected function getAccountUser(AccountInterface $account) {
+    if ($account instanceof UserInterface) {
+      return $account;
+    }
+
     return $this->entityTypeManager->getStorage('user')->load($account->id());
   }
 
