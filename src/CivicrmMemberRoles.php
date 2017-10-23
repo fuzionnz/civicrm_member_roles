@@ -201,7 +201,7 @@ class CivicrmMemberRoles {
       return NULL;
     }
 
-    return \Drupal::currentUser();
+    return $this->entityTypeManager->getStorage('user')->load($result['uf_id']);
   }
 
   /**
