@@ -68,6 +68,7 @@ class CivicrmMemberRoles {
   public function getStatuses() {
     $statuses = [];
 
+    $this->civicrm->initialize();
     $result = civicrm_api3('MembershipStatus', 'get');
     if (empty($result['values'])) {
       return $statuses;
@@ -91,6 +92,7 @@ class CivicrmMemberRoles {
    */
   public function getType($id) {
     try {
+      $this->civicrm->initialize();
       $result = civicrm_api3('MembershipType', 'getsingle', ['id' => $id]);
     }
     catch (\Exception $e) {
@@ -109,6 +111,7 @@ class CivicrmMemberRoles {
   public function getTypes() {
     $types = [];
 
+    $this->civicrm->initialize();
     $result = civicrm_api3('MembershipType', 'get');
     if (empty($result['values'])) {
       return $types;
@@ -169,6 +172,7 @@ class CivicrmMemberRoles {
   public function getUserContactId(AccountInterface $account) {
     try {
       $params = ['uf_id' => $account->id()];
+      $this->civicrm->initialize();
       $result = civicrm_api3('UFMatch', 'getsingle', $params);
     }
     catch (\Exception $e) {
@@ -189,6 +193,7 @@ class CivicrmMemberRoles {
    */
   public function getContactAccount($cid) {
     try {
+      $this->civicrm->initialize();
       $params = ['contact_id' => $cid];
       $result = civicrm_api3('UFMatch', 'getsingle', $params);
     }
@@ -215,6 +220,7 @@ class CivicrmMemberRoles {
     ];
 
     try {
+      $this->civicrm->initialize();
       $result = civicrm_api3('membership', 'get', $params);
     }
     catch (\Exception $e) {
@@ -280,6 +286,7 @@ class CivicrmMemberRoles {
           'sequential' => 1,
           'name' => ['IN' => ['Deceased', 'Cancelled', 'Pending', 'Expired']],
         ];
+        $this->civicrm->initialize();
         $result = civicrm_api3('MembershipStatus', 'get', $params);
         $this->inactiveStatusIds = array_map(function ($item) {
           return $item['id'];
