@@ -67,7 +67,7 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('civicrm_member_roles.settings');
 
-    $config->set('sync_method', $form_state->getValue('sync_method'));
+    $config->set('sync_method', array_keys(array_filter($form_state->getValue('sync_method'))));
     $config->set('cron_limit', $form_state->getValue('cron_limit'));
     $config->save();
 
