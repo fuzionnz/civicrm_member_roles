@@ -2,7 +2,7 @@
 
 namespace Drupal\civicrm_member_roles\Form;
 
-use Drupal\civicrm_member_roles\CivicrmMemberRoles;
+use Drupal\civicrm_member_roles\Batch\Sync;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -13,27 +13,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ManualSyncForm extends FormBase {
 
   /**
-   * CiviCRM member roles service.
+   * CiviCRM member roles sync batch.
    *
-   * @var \Drupal\civicrm_member_roles\CivicrmMemberRoles
+   * @var \Drupal\civicrm_member_roles\Batch\Sync
    */
-  protected $memberRoles;
+  protected $sync;
 
   /**
    * CivicrmMemberRoleRuleForm constructor.
    *
-   * @param \Drupal\civicrm_member_roles\CivicrmMemberRoles $memberRoles
+   * @param Sync $sync
    *   CiviCRM member roles service.
    */
-  public function __construct(CivicrmMemberRoles $memberRoles) {
-    $this->memberRoles = $memberRoles;
+  public function __construct(Sync $sync) {
+    $this->sync = $sync;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('civicrm_member_roles'));
+    return new static($container->get('civicrm_member_roles.batch.sync'));
   }
 
   /**
@@ -64,12 +64,8 @@ class ManualSyncForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if ($this->memberRoles->sync()) {
-      drupal_set_message($this->t('CiviMember Memberships and Drupal Roles have been synchronized using available rules. Note: if no association rules exist then synchronization has not been completed.'));
-    }
-    else {
-      drupal_set_message($this->t('There was an error. CiviMember Memberships and Drupal Roles could not be synchronized.'), 'error');
-    }
+    $batch = $this->sync->getBatch();
+    batch_set($batch);
   }
 
 }
