@@ -36,7 +36,7 @@ function drush_civicrm_member_roles_civicrm_member_role_sync() {
     if (!$account = $storage->load($uid)) {
       return drush_log(dt('Unable to load user ID @uid.', ['@uid' => $uid]), 'error');
     }
-    $civicrm_member_roles->sync($account);
+    $civicrm_member_roles->syncUser($account);
     return drush_log(dt('Successfully synced user ID @uid.', ['@uid' => $uid]), 'ok');
   }
   elseif ($contact_id = drush_get_option('contact_id')) {
