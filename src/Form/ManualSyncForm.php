@@ -22,7 +22,7 @@ class ManualSyncForm extends FormBase {
   /**
    * CivicrmMemberRoleRuleForm constructor.
    *
-   * @param Sync $sync
+   * @param \Drupal\civicrm_member_roles\Batch\Sync $sync
    *   CiviCRM member roles service.
    */
   public function __construct(Sync $sync) {
