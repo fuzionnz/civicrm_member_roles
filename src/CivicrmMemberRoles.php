@@ -127,13 +127,51 @@ class CivicrmMemberRoles {
   /**
    * Sync user roles to membership status.
    *
-   * @return bool
-   *   Indicates if the sync was successful.
+   * @param int|null $limit
+   *   A limit for the number of contacts to sync.
    */
-  public function sync() {
-    // TODO: build this.
-    // Find contacts & accounts, call ::sync.
-    return FALSE;
+  public function sync($limit = NULL) {
+    foreach ($this->getSyncContactIds($limit) as $cid) {
+      if ($account = $this->getContactAccount($cid)) {
+        $this->syncContact($cid, $account);
+      }
+    }
+  }
+
+  /**
+   * Get contact IDs to sync.
+   *
+   * @param int|null $limit
+   *   A limit for the number of IDs to return.
+   *
+   * @return array
+   *   Contact IDs to sync.
+   */
+  public function getSyncContactIds($limit = NULL) {
+    // Gather all of the contact types we have rules for.
+    $types = [];
+    foreach ($this->getRules() as $rule) {
+      $types[] = $rule->getType();
+    }
+    $types = array_unique($types);
+
+    // If no types, bail.
+    if (!$types) {
+      return $types;
+    }
+
+    // Find contacts with applicable types.
+    $select = $this->getDatabase()
+      ->select('civicrm_uf_match', 'uf')
+      ->fields('uf', ['contact_id']);
+    $select->leftJoin('civicrm_membership', 'm', 'uf.contact_id = m.contact_id');
+    $select->isNotNull('m.id')->condition('m.membership_type_id', $types, 'IN');
+
+    if ($limit) {
+      $select->range(0, $limit)->orderRandom();
+    }
+
+    return $select->execute()->fetchCol();
   }
 
   /**
@@ -394,6 +432,16 @@ class CivicrmMemberRoles {
     }
 
     return array_unique($roles);
+  }
+
+  /**
+   * Gets the database.
+   *
+   * @return \Drupal\Core\Database\Connection
+   *   The database.
+   */
+  protected function getDatabase() {
+    return \Drupal::database();
   }
 
 }

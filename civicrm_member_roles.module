@@ -36,14 +36,14 @@ function civicrm_member_roles_user_logout(AccountInterface $account) {
 }
 
 /**
- * Implements hook_user_login().
+ * Implements hook_cron().
  */
 function civicrm_member_roles_cron() {
   $config = \Drupal::config('civicrm_member_roles.settings');
   if (in_array('cron', $config->get('sync_method'))) {
     /** @var \Drupal\civicrm_member_roles\CivicrmMemberRoles $civicrm_member_roles */
     $civicrm_member_roles = \Drupal::service('civicrm_member_roles');
-    $civicrm_member_roles->sync();
+    $civicrm_member_roles->sync($config->get('cron_limit'));
   }
 }
 
