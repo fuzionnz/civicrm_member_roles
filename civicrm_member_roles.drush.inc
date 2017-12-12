@@ -46,7 +46,9 @@ function drush_civicrm_member_roles_civicrm_member_role_sync() {
     $civicrm_member_roles->syncContact($contact_id, $account);
     return drush_log(dt('Successfully synced contact ID @cid.', ['@cid' => $contact_id]), 'ok');
   }
-  else {
-    drush_log(dt('No user or contact specified.'), 'error');
-  }
+
+  $batch = \Drupal::service('civicrm_member_roles.batch.sync')->getBatch();
+  $batch['progressive'] = FALSE;
+  batch_set($batch);
+  drush_backend_batch_process();
 }
