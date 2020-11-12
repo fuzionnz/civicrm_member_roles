@@ -80,11 +80,11 @@ class Sync {
   public function finished($success, array $results) {
     if ($success) {
       $message = $this->stringTranslation->formatPlural($results['processed'], 'One user processed.', '@count users processed.');
-      drupal_set_message($message);
+      \Drupal::messenger()->addStatus($message);
     }
     else {
       $message = $this->t('Encountered errors while performing sync.');
-      drupal_set_message($message, 'error');
+      \Drupal::messenger()->addError($message);
     }
 
   }
