@@ -1,0 +1,12 @@
+{
+    "name": "drupal/civicrm_member_roles",
+    "type": "drupal-module",
+    "description": "Synchronize CiviCRM Contacts with Membership Status to a specified Drupal Role both automatically and manually.",
+    "homepage": "http://drupal.org/project/civicrm_member_roles",
+    "license": "GPL-2.0+",
+    "require": {
+        "civicrm/civicrm-core": "~5.0",
+        "civicrm/civicrm-drupal-8": "~5.0":
+    },
+    "minimum-stability": "dev"
+}
